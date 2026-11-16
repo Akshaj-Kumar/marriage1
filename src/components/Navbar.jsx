@@ -66,7 +66,7 @@ export default function Navbar({ isMusicPlaying, onToggleMusic, onReopenEnvelope
             ))}
           </nav>
 
-          {/* Right Controls: Din Shagna Da Audio Toggle + MENU Button */}
+          {/* Right Controls: Tum Mile Audio Toggle + MENU Button */}
           <div className="flex items-center gap-2.5 sm:gap-3">
             
             {/* Music Toggle Button */}

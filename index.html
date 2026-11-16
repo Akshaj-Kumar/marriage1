@@ -15,6 +15,58 @@
     <meta name="theme-color" content="#461927" />
   </head>
   <body class="bg-ivory text-neutral-800 font-montserrat antialiased selection:bg-gold/30 selection:text-burgundy overflow-x-hidden">
+    <!-- Dedicated Wedding Audio: Tum Mile - Love Reprise -->
+    <audio id="wedding-audio" preload="auto" loop playsinline></audio>
+    <script>
+      (function() {
+        var audio = document.getElementById('wedding-audio');
+        if (!audio) return;
+        var path = window.location.pathname;
+        var isSub = path.indexOf('/marriage1') !== -1;
+        audio.src = isSub ? '/marriage1/audio/tum-mile.mp3' : './audio/tum-mile.mp3';
+
+        function startAudio() {
+          if (!audio.paused) return;
+          var p = audio.play();
+          if (p !== undefined) {
+            p.then(function() {
+              window.__weddingAudioPlaying = true;
+              window.dispatchEvent(new CustomEvent('wedding-audio-started'));
+            }).catch(function(e) {
+              console.log('Autoplay requires gesture:', e);
+            });
+          }
+        }
+
+        // Try immediate autoplay
+        startAudio();
+        document.addEventListener('DOMContentLoaded', startAudio);
+        window.addEventListener('load', startAudio);
+
+        // Unlock on ANY user gesture (click, tap, touch) anywhere on document
+        var events = ['click', 'touchstart', 'touchend', 'pointerdown', 'pointerup', 'keydown'];
+        function onGesture() {
+          if (audio.paused) {
+            var p = audio.play();
+            if (p !== undefined) {
+              p.then(function() {
+                window.__weddingAudioPlaying = true;
+                window.dispatchEvent(new CustomEvent('wedding-audio-started'));
+                events.forEach(function(ev) {
+                  window.removeEventListener(ev, onGesture, true);
+                  document.removeEventListener(ev, onGesture, true);
+                });
+              }).catch(function(){});
+            }
+          }
+        }
+
+        events.forEach(function(ev) {
+          window.addEventListener(ev, onGesture, { capture: true, passive: true });
+          document.addEventListener(ev, onGesture, { capture: true, passive: true });
+        });
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

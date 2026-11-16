@@ -15,7 +15,12 @@ class WeddingAudioEngine {
   }
 
   getAudioSrc() {
-    // Dynamically resolve base URL so it works on both localhost and https://akshaj-kumar.github.io/marriage1/
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      if (path.includes('/marriage1')) {
+        return '/marriage1/audio/tum-mile.mp3';
+      }
+    }
     const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) 
       ? import.meta.env.BASE_URL 
       : './';
@@ -27,11 +32,24 @@ class WeddingAudioEngine {
     if (this.initialized) return;
     this.initialized = true;
 
-    if (!this.audioElement && typeof window !== 'undefined') {
-      this.audioElement = new Audio();
-      this.audioElement.src = this.getAudioSrc();
-      this.audioElement.loop = true;
-      this.audioElement.preload = 'auto';
+    if (typeof window !== 'undefined') {
+      let existing = document.getElementById('wedding-audio');
+      if (existing) {
+        this.audioElement = existing;
+      } else {
+        this.audioElement = new Audio();
+        this.audioElement.id = 'wedding-audio';
+        this.audioElement.src = this.getAudioSrc();
+        this.audioElement.loop = true;
+        this.audioElement.preload = 'auto';
+        document.body.appendChild(this.audioElement);
+      }
+
+      if (!this.audioElement.src || this.audioElement.src.endsWith('/')) {
+        this.audioElement.src = this.getAudioSrc();
+      }
+
+      this.isPlaying = !this.audioElement.paused;
 
       this.audioElement.addEventListener('playing', () => {
         this.isPlaying = true;
@@ -44,7 +62,16 @@ class WeddingAudioEngine {
       });
 
       this.audioElement.addEventListener('error', (e) => {
-        console.warn('Audio element error with path:', this.audioElement.src, e);
+        console.warn('Audio fallback triggered:', e);
+        if (this.audioElement.src.includes('/marriage1/')) {
+          this.audioElement.src = './audio/tum-mile.mp3';
+          this.play().catch(() => {});
+        }
+      });
+
+      window.addEventListener('wedding-audio-started', () => {
+        this.isPlaying = true;
+        this.notify();
       });
     }
 
@@ -58,6 +85,7 @@ class WeddingAudioEngine {
 
   subscribe(callback) {
     this.listeners.add(callback);
+    callback({ isPlaying: this.isPlaying });
     return () => this.listeners.delete(callback);
   }
 
@@ -69,25 +97,45 @@ class WeddingAudioEngine {
   autoStart() {
     this.init();
 
+    if (this.audioElement && !this.audioElement.paused) {
+      this.isPlaying = true;
+      this.notify();
+      return;
+    }
+
     // 1. Try immediate playback
-    this.play().catch(() => {
-      // 2. Browser blocked unprompted autoplay -> trigger on very first gesture
+    this.play().then(() => {
+      this.isPlaying = true;
+      this.notify();
+    }).catch(() => {
+      // 2. Browser blocked unprompted autoplay -> trigger on first interaction
       const unlockAndPlay = () => {
-        if (!this.isPlaying) {
-          this.play();
+        if (!this.audioElement || !this.audioElement.paused) {
+          this.isPlaying = true;
+          this.notify();
+          cleanup();
+          return;
         }
-        window.removeEventListener('pointerdown', unlockAndPlay);
-        window.removeEventListener('touchstart', unlockAndPlay);
-        window.removeEventListener('click', unlockAndPlay);
-        window.removeEventListener('scroll', unlockAndPlay);
-        window.removeEventListener('keydown', unlockAndPlay);
+
+        this.play().then(() => {
+          this.isPlaying = true;
+          this.notify();
+          cleanup();
+        }).catch(() => {});
       };
 
-      window.addEventListener('pointerdown', unlockAndPlay, { once: true, passive: true });
-      window.addEventListener('touchstart', unlockAndPlay, { once: true, passive: true });
-      window.addEventListener('click', unlockAndPlay, { once: true, passive: true });
-      window.addEventListener('scroll', unlockAndPlay, { once: true, passive: true });
-      window.addEventListener('keydown', unlockAndPlay, { once: true, passive: true });
+      const events = ['click', 'touchstart', 'touchend', 'pointerdown', 'pointerup', 'keydown'];
+      const cleanup = () => {
+        events.forEach(e => {
+          window.removeEventListener(e, unlockAndPlay, true);
+          document.removeEventListener(e, unlockAndPlay, true);
+        });
+      };
+
+      events.forEach(e => {
+        window.addEventListener(e, unlockAndPlay, { capture: true, passive: true });
+        document.addEventListener(e, unlockAndPlay, { capture: true, passive: true });
+      });
     });
   }
 
@@ -103,7 +151,6 @@ class WeddingAudioEngine {
         this.isPlaying = true;
         this.notify();
       } catch (err) {
-        // Return rejection to let caller or autoStart handle gesture fallback
         throw err;
       }
     }
@@ -118,6 +165,7 @@ class WeddingAudioEngine {
   }
 
   toggle() {
+    this.init();
     if (this.isPlaying) {
       this.pause();
     } else {

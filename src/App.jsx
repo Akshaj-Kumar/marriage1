@@ -30,6 +30,25 @@ export default function App() {
     return unsubscribe;
   }, []);
 
+  // Global listener: first click/tap anywhere unlocks and starts Tum Mile immediately
+  useEffect(() => {
+    if (isMusicPlaying) return;
+
+    const handleGlobalInteraction = () => {
+      weddingAudio.play().catch(() => {});
+    };
+
+    window.addEventListener('click', handleGlobalInteraction, { capture: true, passive: true });
+    window.addEventListener('touchstart', handleGlobalInteraction, { capture: true, passive: true });
+    window.addEventListener('pointerdown', handleGlobalInteraction, { capture: true, passive: true });
+
+    return () => {
+      window.removeEventListener('click', handleGlobalInteraction, { capture: true });
+      window.removeEventListener('touchstart', handleGlobalInteraction, { capture: true });
+      window.removeEventListener('pointerdown', handleGlobalInteraction, { capture: true });
+    };
+  }, [isMusicPlaying]);
+
   const handleOpenEnvelope = () => {
     setIsEnvelopeOpen(true);
     weddingAudio.play().catch(() => {});
@@ -56,6 +75,19 @@ export default function App() {
           <InvitationEnvelope onOpen={handleOpenEnvelope} />
         )}
       </AnimatePresence>
+
+      {/* Floating Prompt if browser blocked initial silent autoplay */}
+      {!isMusicPlaying && (
+        <div 
+          onClick={() => weddingAudio.play().catch(() => {})}
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 cursor-pointer animate-pulse"
+        >
+          <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-burgundy-dark/95 text-gold-light border-2 border-gold shadow-2xl backdrop-blur-md text-xs sm:text-sm font-cinzel tracking-wider hover:scale-105 transition-all">
+            <span className="w-2.5 h-2.5 rounded-full bg-gold animate-ping" />
+            <span>🎵 Tap anywhere to play "Tum Mile"</span>
+          </div>
+        </div>
+      )}
 
       {/* Ambient Falling Rose & Marigold Petals */}
       <FallingPetals enabled={petalsEnabled} />

@@ -39,6 +39,7 @@ export default function Hero({ onExplore }) {
 
   const handleExploreClick = () => {
     weddingAudio.playRoyalChime();
+    weddingAudio.play().catch(() => {});
     if (onExplore) {
       onExplore();
     } else {
