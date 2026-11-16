@@ -1,23 +1,23 @@
 # Aarav & Meera — Luxury Royal Wedding Invitation Website 💍
 ### Destination: Jaipur, Rajasthan, India • 12, 13, 14 February 2027
 
-A luxury, animated, and fully responsive Indian royal wedding invitation website inspired by the Jaipur palace heritage.
+A luxury, interactive, and joyful royal wedding invitation website for Aarav & Meera.
 
 ---
 
 ## 🌟 Key Features
 
-1. **Interactive Royal Wax Seal Envelope Opening**:
-   - Monogrammed `A & M` royal wax seal on deep burgundy paper.
-   - Interactive seal breaking animation with golden chime and rose petal burst.
-   - Unveils the full royal celebration and starts the song.
+1. **Automatic Song Playback**:
+   - Features the romantic song: **"Tum Mile - Love Reprise"** (by Pritam & Javed Ali).
+   - [Spotify Track Link](https://open.spotify.com/track/2reL5aFJtC5CDphTTJHuRH?si=abd9ec5c10f8452e)
+   - Automatically begins playback from the start when opening the link!
 
-2. **"Din Shagna Da" Song Player**:
-   - Floating gold vinyl disc player with animated sound equalizer.
-   - Built-in Web Audio acoustic Bansuri / Shehnai melody engine playing the soulful notes of "Din Shagna Da", with support for custom `/audio/din-shagna-da.mp3`.
-   - Lyrics modal for guests to sing along to the bridal entry anthem.
+2. **Official Spotify Integration**:
+   - Interactive Spotify Player Embed directly on the page.
+   - Lyrics sing-along sheet.
+   - Floating gold vinyl player at bottom-left.
 
-3. **All Authentic Sections from Design**:
+3. **Authentic Wedding Sections**:
    - **Hero**: Framed in double gold filigree with Aarav & Meera typography, Jaipur location, and live countdown timer.
    - **A Little About Us**: "Two hearts, one beautiful journey" story card with photo offset accent.
    - **Save the Dates / Festivities**:
@@ -25,32 +25,16 @@ A luxury, animated, and fully responsive Indian royal wedding invitation website
      - 🌿 **Mehendi**: 12 Feb 2027 • 4:00 PM • The Royal Lawn
      - 🎶 **Sangeet**: 13 Feb 2027 • 7:00 PM • Palace Ballroom
      - 💍 **The Wedding**: 14 Feb 2027 • 6:00 PM • Heritage Courtyard
-     - Interactive calendar sync: Click to add any ceremony directly to Google Calendar!
-   - **The When & Where**: Deep burgundy royal block detailing Jaipur venue with Google Maps directions button.
+     - Direct **"Add to Google Calendar"** sync for all ceremonies!
+   - **The When & Where**: Deep burgundy royal block detailing Jaipur venue with Google Maps directions.
    - **Moments to Remember**: High-res curated wedding gallery with fullscreen lightbox and zero broken links.
-   - **Kindly Reply (RSVP)**: Fully interactive guest RSVP with instant confirmation pass and confetti burst.
+   - **Kindly Reply (RSVP)**: Interactive guest RSVP with instant confirmation pass and confetti burst.
    - **Bless the Couple (Guestbook)**: Live interactive blessings wall where guests can leave warm wishes with likes.
    - **Falling Petals**: Gentle rose & marigold petals floating softly across the screen (can be toggled on/off).
 
 ---
 
-## 🚀 How to Run Locally
+## 🌐 Live Website
 
-```bash
-# 1. Navigate to the marriage1 folder
-cd "c:\Users\Akshaj\Desktop\ai bundle\marriage1"
-
-# 2. Start the development server
-npm run dev
-
-# 3. Open in your browser:
-# http://localhost:3001
-```
-
----
-
-## 🎨 How to Customize
-
-- **Couple & Details**: Edit `src/data/weddingData.js` to change names, dates, venues, or itinerary.
-- **Photos**: Place personal photos in `public/images/` and update references in `weddingData.js`.
-- **Music**: Drop any version of "Din Shagna Da" into `public/audio/din-shagna-da.mp3`.
+- **Live URL:** https://akshaj-kumar.github.io/marriage1/
+- **Repository:** https://github.com/Akshaj-Kumar/marriage1

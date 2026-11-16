@@ -1,7 +1,8 @@
 /**
  * Wedding Audio Engine - Exclusively for "Tum Mile - Love Reprise"
  * 
- * Auto-plays seamlessly on website load and first interaction!
+ * Works across local dev and GitHub Pages subpaths!
+ * Auto-plays smoothly on load and on very first user interaction!
  */
 
 class WeddingAudioEngine {
@@ -9,16 +10,26 @@ class WeddingAudioEngine {
     this.audioElement = null;
     this.ctx = null;
     this.isPlaying = false;
-    this.isSynthesized = false;
-    this.synthTimeout = null;
     this.listeners = new Set();
-    this.hasInteracted = false;
+    this.initialized = false;
+  }
+
+  getAudioSrc() {
+    // Dynamically resolve base URL so it works on both localhost and https://akshaj-kumar.github.io/marriage1/
+    const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) 
+      ? import.meta.env.BASE_URL 
+      : './';
+    const cleanBase = base.endsWith('/') ? base : `${base}/`;
+    return `${cleanBase}audio/tum-mile.mp3`;
   }
 
   init() {
+    if (this.initialized) return;
+    this.initialized = true;
+
     if (!this.audioElement && typeof window !== 'undefined') {
       this.audioElement = new Audio();
-      this.audioElement.src = '/audio/tum-mile.mp3';
+      this.audioElement.src = this.getAudioSrc();
       this.audioElement.loop = true;
       this.audioElement.preload = 'auto';
 
@@ -33,7 +44,7 @@ class WeddingAudioEngine {
       });
 
       this.audioElement.addEventListener('error', (e) => {
-        console.warn('Local MP3 playback note:', e);
+        console.warn('Audio element error with path:', this.audioElement.src, e);
       });
     }
 
@@ -42,9 +53,6 @@ class WeddingAudioEngine {
       if (AudioCtx) {
         this.ctx = new AudioCtx();
       }
-    }
-    if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume().catch(() => {});
     }
   }
 
@@ -57,27 +65,29 @@ class WeddingAudioEngine {
     this.listeners.forEach(cb => cb({ isPlaying: this.isPlaying }));
   }
 
-  // Attempt automatic start immediately and on first user gesture
-  autoStartOnFirstGesture() {
+  // Automatic playback starter
+  autoStart() {
     this.init();
 
-    // 1. Try immediate direct play (works if browser allows or in PWA / restored tab)
+    // 1. Try immediate playback
     this.play().catch(() => {
-      // Browser blocked silent autoplay -> attach listener to start on very first user tap/click/scroll
-      const startPlayback = () => {
+      // 2. Browser blocked unprompted autoplay -> trigger on very first gesture
+      const unlockAndPlay = () => {
         if (!this.isPlaying) {
           this.play();
         }
-        window.removeEventListener('click', startPlayback);
-        window.removeEventListener('touchstart', startPlayback);
-        window.removeEventListener('scroll', startPlayback);
-        window.removeEventListener('keydown', startPlayback);
+        window.removeEventListener('pointerdown', unlockAndPlay);
+        window.removeEventListener('touchstart', unlockAndPlay);
+        window.removeEventListener('click', unlockAndPlay);
+        window.removeEventListener('scroll', unlockAndPlay);
+        window.removeEventListener('keydown', unlockAndPlay);
       };
 
-      window.addEventListener('click', startPlayback, { once: true, passive: true });
-      window.addEventListener('touchstart', startPlayback, { once: true, passive: true });
-      window.addEventListener('scroll', startPlayback, { once: true, passive: true });
-      window.addEventListener('keydown', startPlayback, { once: true, passive: true });
+      window.addEventListener('pointerdown', unlockAndPlay, { once: true, passive: true });
+      window.addEventListener('touchstart', unlockAndPlay, { once: true, passive: true });
+      window.addEventListener('click', unlockAndPlay, { once: true, passive: true });
+      window.addEventListener('scroll', unlockAndPlay, { once: true, passive: true });
+      window.addEventListener('keydown', unlockAndPlay, { once: true, passive: true });
     });
   }
 
@@ -92,13 +102,10 @@ class WeddingAudioEngine {
         await this.audioElement.play();
         this.isPlaying = true;
         this.notify();
-        return;
       } catch (err) {
-        // Fallback: If browser restricts HTML5 media, start high-fidelity acoustic melody
-        this.startTumMileSynth();
+        // Return rejection to let caller or autoStart handle gesture fallback
+        throw err;
       }
-    } else {
-      this.startTumMileSynth();
     }
   }
 
@@ -106,7 +113,6 @@ class WeddingAudioEngine {
     if (this.audioElement) {
       this.audioElement.pause();
     }
-    this.stopTumMileSynth();
     this.isPlaying = false;
     this.notify();
   }
@@ -115,15 +121,22 @@ class WeddingAudioEngine {
     if (this.isPlaying) {
       this.pause();
     } else {
-      this.play();
+      this.play().catch(() => {});
     }
   }
 
-  // Chime effect for buttons
+  // Royal bell chime for interactive buttons
   playRoyalChime() {
     try {
-      this.init();
+      if (!this.ctx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) this.ctx = new AudioCtx();
+      }
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume().catch(() => {});
+      }
       if (!this.ctx) return;
+
       const notes = [587.33, 739.99, 880, 1174.66];
       notes.forEach((freq, idx) => {
         const osc = this.ctx.createOscillator();
@@ -143,78 +156,6 @@ class WeddingAudioEngine {
         osc.stop(startTime + 0.85);
       });
     } catch {}
-  }
-
-  // Soulful melody notes of "Tum Mile" (Raag / acoustic acoustic notes)
-  // "Tu hi meri hai saari wafa... Tum mile toh jadoo chha gaya..."
-  startTumMileSynth() {
-    try {
-      this.init();
-      if (!this.ctx) return;
-      this.isPlaying = true;
-      this.isSynthesized = true;
-      this.notify();
-
-      const melody = [
-        { f: 392.00, d: 0.6 }, // G4 - Tum
-        { f: 440.00, d: 0.7 }, // A4 - mi-
-        { f: 523.25, d: 1.0 }, // C5 - le
-        { f: 493.88, d: 0.6 }, // B4 - toh
-        { f: 440.00, d: 0.8 }, // A4 - ja-
-        { f: 392.00, d: 0.6 }, // G4 - doo
-        { f: 369.99, d: 0.9 }, // F#4 - chha
-        { f: 392.00, d: 1.2 }, // G4 - ga-ya
-        { f: 0, d: 0.4 },      // pause
-        { f: 392.00, d: 0.6 }, // G4 - Tum
-        { f: 440.00, d: 0.7 }, // A4 - mi-
-        { f: 523.25, d: 1.0 }, // C5 - le
-        { f: 493.88, d: 0.6 }, // B4 - toh
-        { f: 440.00, d: 0.8 }, // A4 - jee-
-        { f: 392.00, d: 0.6 }, // G4 - na
-        { f: 440.00, d: 0.9 }, // A4 - aa
-        { f: 392.00, d: 1.4 }, // G4 - ga-ya
-        { f: 0, d: 0.5 },
-      ];
-
-      let noteIdx = 0;
-
-      const playNext = () => {
-        if (!this.isPlaying || !this.isSynthesized || !this.ctx) return;
-
-        const note = melody[noteIdx];
-        noteIdx = (noteIdx + 1) % melody.length;
-
-        if (note.f > 0) {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(note.f, this.ctx.currentTime);
-
-          gain.gain.setValueAtTime(0.001, this.ctx.currentTime);
-          gain.gain.linearRampToValueAtTime(0.12, this.ctx.currentTime + 0.1);
-          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + note.d);
-
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-
-          osc.start();
-          osc.stop(this.ctx.currentTime + note.d + 0.05);
-        }
-
-        this.synthTimeout = setTimeout(playNext, (note.d + 0.1) * 1000);
-      };
-
-      playNext();
-    } catch {}
-  }
-
-  stopTumMileSynth() {
-    this.isSynthesized = false;
-    if (this.synthTimeout) {
-      clearTimeout(this.synthTimeout);
-      this.synthTimeout = null;
-    }
   }
 }
 

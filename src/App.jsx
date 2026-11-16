@@ -16,13 +16,14 @@ import Footer from './components/Footer';
 import { weddingAudio } from './utils/weddingAudio';
 
 export default function App() {
-  const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(false);
+  // Main celebration website displays immediately on link open
+  const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(true);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [petalsEnabled, setPetalsEnabled] = useState(true);
 
-  // Sync with audio engine state changes and auto-start on first gesture
+  // Auto-play Tum Mile - Love Reprise immediately on open
   useEffect(() => {
-    weddingAudio.autoStartOnFirstGesture();
+    weddingAudio.autoStart();
     const unsubscribe = weddingAudio.subscribe(({ isPlaying }) => {
       setIsMusicPlaying(isPlaying);
     });
@@ -31,7 +32,7 @@ export default function App() {
 
   const handleOpenEnvelope = () => {
     setIsEnvelopeOpen(true);
-    weddingAudio.play();
+    weddingAudio.play().catch(() => {});
   };
 
   const handleReopenEnvelope = () => {
@@ -49,17 +50,17 @@ export default function App() {
   return (
     <div className="relative min-h-screen bg-ivory text-neutral-800 font-montserrat selection:bg-gold/30 selection:text-burgundy">
       
-      {/* 1. Interactive Royal Wax Seal Envelope Opening (Unveils wedding on click) */}
+      {/* Optional Royal Wax Seal Envelope View */}
       <AnimatePresence>
         {!isEnvelopeOpen && (
           <InvitationEnvelope onOpen={handleOpenEnvelope} />
         )}
       </AnimatePresence>
 
-      {/* 2. Ambient Falling Rose and Marigold Petals */}
+      {/* Ambient Falling Rose & Marigold Petals */}
       <FallingPetals enabled={petalsEnabled} />
 
-      {/* 3. Luxury Navigation Bar */}
+      {/* Luxury Navigation Bar */}
       <Navbar
         isMusicPlaying={isMusicPlaying}
         onToggleMusic={handleToggleMusic}
@@ -68,39 +69,39 @@ export default function App() {
         onTogglePetals={handleTogglePetals}
       />
 
-      {/* 4. Main Royal Hero Section */}
+      {/* Main Royal Hero Section */}
       <Hero onExplore={() => {
         document.querySelector('#story')?.scrollIntoView({ behavior: 'smooth' });
       }} />
 
-      {/* 5. A Little About Us / Two Hearts One Beautiful Journey */}
+      {/* A Little About Us / Two Hearts One Beautiful Journey */}
       <AboutStory />
 
-      {/* 5.5. Official Spotify Love Song Section ("Tum Mile - Love Reprise") */}
+      {/* Official Spotify Love Song Section ("Tum Mile - Love Reprise") */}
       <SpotifySongSection />
 
-      {/* 6. Wedding Festivities (Haldi, Mehendi, Sangeet, The Wedding) */}
+      {/* Wedding Festivities (Haldi, Mehendi, Sangeet, The Wedding) */}
       <Festivities />
 
-      {/* 7. The When & Where / Royal Heritage Palace, Jaipur */}
+      {/* The When & Where / Royal Heritage Palace, Jaipur */}
       <WhenAndWhere />
 
-      {/* 8. Moments to Remember / A Glimpse of the Magic (Gallery) */}
+      {/* Moments to Remember / A Glimpse of the Magic (Gallery) */}
       <MomentsGallery />
 
-      {/* 9. Kindly Reply / RSVP Form */}
+      {/* Kindly Reply / RSVP Form */}
       <RSVP />
 
-      {/* 10. Sacred Blessings & Love Guestbook */}
+      {/* Sacred Blessings & Love Guestbook */}
       <BlessingsWall />
 
-      {/* 11. Luxury Floating "Din Shagna Da" Player */}
+      {/* Luxury Floating "Tum Mile - Love Reprise" Player */}
       <MusicPlayer
         isPlaying={isMusicPlaying}
         onToggle={handleToggleMusic}
       />
 
-      {/* 12. Royal Wedding Footer */}
+      {/* Royal Wedding Footer */}
       <Footer />
     </div>
   );

@@ -1,11 +1,7 @@
-DIN SHAGNA DA AUDIO INSTRUCTIONS:
-==================================
+WEDDING AUDIO:
+=============
+Song: Tum Mile - Love Reprise (Pritam, Javed Ali)
+Spotify Track: https://open.spotify.com/track/2reL5aFJtC5CDphTTJHuRH?si=abd9ec5c10f8452e
 
-1. Place your MP3 file for "Din Shagna Da" inside this directory:
-   public/audio/din-shagna-da.mp3
-
-2. The application is built with automatic detection:
-   - If `din-shagna-da.mp3` is present, it will play the authentic recorded track.
-   - If not present or blocked by browser policies, it will automatically fall back to the built-in acoustic Bansuri (Indian flute) synthesis of the "Din Shagna Da" melody.
-
-Both options work smoothly and without errors!
+Audio file: public/audio/tum-mile.mp3
+Auto-plays on website launch!

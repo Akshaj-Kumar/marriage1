@@ -102,12 +102,25 @@ export default function Hero({ onExplore }) {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm md:text-base font-cinzel tracking-[0.25em] text-gold-light/95 uppercase mb-10"
+          className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm md:text-base font-cinzel tracking-[0.25em] text-gold-light/95 uppercase mb-6"
         >
           <span>{couple.weddingDatesShort}</span>
           <span className="hidden sm:inline text-gold">|</span>
           <span>{couple.weddingLocationShort}</span>
         </motion.div>
+
+        {/* Exclusive Song Playing Indicator */}
+        <motion.button
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.45 }}
+          onClick={() => weddingAudio.toggle()}
+          className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-black/50 border border-gold/40 hover:border-gold text-gold-light text-xs font-cinzel tracking-wider uppercase mb-8 backdrop-blur-md transition-all shadow-md group"
+          title="Click to toggle Tum Mile playback"
+        >
+          <span className="w-2 h-2 rounded-full bg-green-400 animate-ping" />
+          <span>🎵 Tum Mile (Love Reprise) • Pritam &amp; Javed Ali</span>
+        </motion.button>
 
         {/* Live Countdown to 12 February 2027 */}
         <motion.div

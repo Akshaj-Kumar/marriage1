@@ -3,7 +3,7 @@
  * 
  * Destination: Jaipur, Rajasthan, India
  * Dates: 12, 13, 14 February 2027
- * Signature Wedding Song: "Tum Mile - Love Reprise" (Spotify)
+ * Exclusive Official Song: "Tum Mile - Love Reprise" (Spotify)
  */
 
 export const WEDDING_DATA = {
@@ -126,42 +126,42 @@ export const WEDDING_DATA = {
       caption: "Our First Sunset Promise",
       tag: "The Romance",
       src: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1000&q=80",
-      fallback: "/images/couple-golden.svg"
+      fallback: "./images/couple-golden.svg"
     },
     {
       id: 2,
       caption: "Floral Elegance & Sacred Blooms",
       tag: "Wedding Flowers",
       src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=1000&q=80",
-      fallback: "/images/wedding-flowers.svg"
+      fallback: "./images/wedding-flowers.svg"
     },
     {
       id: 3,
       caption: "Laughter by the Palace Pool",
       tag: "Celebration",
       src: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80",
-      fallback: "/images/pool-celebration.svg"
+      fallback: "./images/pool-celebration.svg"
     },
     {
       id: 4,
       caption: "The Royal Heritage Palace",
       tag: "Jaipur Architecture",
       src: "https://images.unsplash.com/photo-1602703112100-b022fb5ad883?auto=format&fit=crop&w=1000&q=80",
-      fallback: "/images/palace-heritage.svg"
+      fallback: "./images/palace-heritage.svg"
     },
     {
       id: 5,
       caption: "Royal Wedding Feast Setting",
       tag: "Table Decor",
       src: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1000&q=80",
-      fallback: "/images/table-setting.svg"
+      fallback: "./images/table-setting.svg"
     },
     {
       id: 6,
       caption: "Intricate Mehendi & Henna Art",
       tag: "Traditions",
       src: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=80",
-      fallback: "/images/mehendi-art.svg"
+      fallback: "./images/mehendi-art.svg"
     }
   ],
 
